@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Your Tasks{% endblock %}
+{% block content %}
+<h2>Your To-Do List</h2>
+
+<form method="POST" class="mb-3">
+  {{ form.hidden_tag() }}
+  <div class="mb-3">
+    {{ form.content.label(class="form-label") }}
+    {{ form.content(class="form-control", placeholder="Enter task") }}
+  </div>
+  <div class="row">
+    <div class="col">
+      {{ form.due_date.label(class="form-label") }}
+      {{ form.due_date(class="form-control") }}
+    </div>
+    <div class="col">
+      {{ form.priority.label(class="form-label") }}
+      {{ form.priority(class="form-control", placeholder="Leave empty for NLP suggestion") }}
+    </div>
+    <div class="col">
+      {{ form.category.label(class="form-label") }}
+      {{ form.category(class="form-control", placeholder="Leave empty for NLP suggestion") }}
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary mt-3">{{ form.submit.label.text }}</button>
+</form>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Task</th>
+      <th>Due Date</th>
+      <th>Priority</th>
+      <th>Category</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for task in tasks %}
+    <tr>
+      <td>{{ task.content }}</td>
+      <td>{{ task.due_date.strftime('%Y-%m-%d') }}</td>
+      <td>{{ task.priority }}</td>
+      <td>{{ task.category }}</td>
+      <td>{{ "Completed" if task.completed else "Pending" }}</td>
+      <td>
+        {% if not task.completed %}
+        <a href="{{ url_for('complete_task', task_id=task.id) }}" class="btn btn-success btn-sm">Complete</a>
+        {% endif %}
+        <a href="{{ url_for('delete_task', task_id=task.id) }}" class="btn btn-danger btn-sm">Delete</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
