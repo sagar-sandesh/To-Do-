@@ -1,85 +1,122 @@
-from flask import Flask, render_template, redirect, url_for, request, flash, session, jsonify
-from flask_bcrypt import Bcrypt
-from forms import RegisterForm, LoginForm
-from models import db, User, Task
-from nlp_utils import extract_priority
-from functools import wraps
+from flask import Flask, render_template, redirect, url_for, flash, request
+from flask_sqlalchemy import SQLAlchemy
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField, DateField, PasswordField
+from wtforms.validators import DataRequired, Length, Email, EqualTo
+from flask_login import LoginManager, login_user, current_user, logout_user, login_required, UserMixin
+from nlp_utils import analyze_task
+import datetime
+from extensions import db, login_manager
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your-secret-key'
+app.config['SECRET_KEY'] = 'your_secret_key_here'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
 db.init_app(app)
-bcrypt = Bcrypt(app)
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 
-# ---------------- User Session ----------------
-def login_required(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        if 'user_id' not in session:
-            return redirect(url_for('login'))
-        return f(*args, **kwargs)
-    return wrapper
+from models import User, Task
 
-# ---------------- Routes ----------------
-@app.route('/')
-@login_required
-def index():
-    tasks = Task.query.filter_by(user_id=session['user_id']).all()
-    return render_template('index.html', tasks=tasks)
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+class RegistrationForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Register')
+
+class LoginForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Login')
+
+class TaskForm(FlaskForm):
+    content = StringField('Task', validators=[DataRequired()])
+    due_date = DateField('Due Date', default=datetime.date.today)
+    priority = StringField('Priority (e.g., High, Medium, Low)')
+    category = StringField('Category (e.g., Work, Home)')
+    submit = SubmitField('Add/Update Task')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    form = RegisterForm()
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = RegistrationForm()
     if form.validate_on_submit():
-        hashed_pw = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data, password=hashed_pw)
+        user = User(email=form.email.data)
+        user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash("Registered Successfully!", "success")
+        flash('Registration successful! Please log in.', 'success')
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
-            session['user_id'] = user.id
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and user.check_password(form.password.data):
+            login_user(user)
             return redirect(url_for('index'))
-        flash("Invalid credentials", "danger")
+        else:
+            flash('Invalid email or password', 'danger')
     return render_template('login.html', form=form)
 
 @app.route('/logout')
 def logout():
-    session.pop('user_id', None)
+    logout_user()
     return redirect(url_for('login'))
 
-@app.route('/add-task', methods=['POST'])
+@app.route('/', methods=['GET', 'POST'])
 @login_required
-def add_task():
-    task_text = request.form.get('task')
-    priority = extract_priority(task_text)
-    task = Task(description=task_text, priority=priority, user_id=session['user_id'])
-    db.session.add(task)
-    db.session.commit()
-    return redirect(url_for('index'))
+def index():
+    form = TaskForm()
+    if form.validate_on_submit():
+        priority_suggestion, category_suggestion = analyze_task(form.content.data)
+        priority = form.priority.data if form.priority.data else priority_suggestion
+        category = form.category.data if form.category.data else category_suggestion
 
-@app.route('/delete-task/<int:task_id>')
+        task = Task(content=form.content.data,
+                    due_date=form.due_date.data,
+                    priority=priority,
+                    category=category,
+                    user_id=current_user.id)
+        db.session.add(task)
+        db.session.commit()
+        flash('Task added!', 'success')
+        return redirect(url_for('index'))
+
+    tasks = Task.query.filter_by(user_id=current_user.id).order_by(Task.due_date).all()
+    return render_template('index.html', form=form, tasks=tasks)
+
+@app.route('/delete/<int:task_id>')
 @login_required
 def delete_task(task_id):
-    task = Task.query.get(task_id)
-    if task and task.user_id == session['user_id']:
-        db.session.delete(task)
-        db.session.commit()
+    task = Task.query.get_or_404(task_id)
+    if task.user_id != current_user.id:
+        flash('Unauthorized action!', 'danger')
+        return redirect(url_for('index'))
+    db.session.delete(task)
+    db.session.commit()
+    flash('Task deleted!', 'success')
     return redirect(url_for('index'))
 
-# ---------------- REST API ----------------
-@app.route('/api/tasks', methods=['GET'])
+@app.route('/complete/<int:task_id>')
 @login_required
-def get_tasks():
-    tasks = Task.query.filter_by(user_id=session['user_id']).all()
-    return jsonify([task.as_dict() for task in tasks])
+def complete_task(task_id):
+    task = Task.query.get_or_404(task_id)
+    if task.user_id != current_user.id:
+        flash('Unauthorized action!', 'danger')
+        return redirect(url_for('index'))
+    task.completed = True
+    db.session.commit()
+    flash('Task marked as completed!', 'success')
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     with app.app_context():
