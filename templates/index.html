@@ -1,58 +1,110 @@
 {% extends "base.html" %}
 {% block title %}Your Tasks{% endblock %}
 {% block content %}
-<h2>Your To-Do List</h2>
 
-<form method="POST" class="mb-3">
-  {{ form.hidden_tag() }}
-  <div class="mb-3">
-    {{ form.content.label(class="form-label") }}
-    {{ form.content(class="form-control", placeholder="Enter task") }}
-  </div>
-  <div class="row">
-    <div class="col">
-      {{ form.due_date.label(class="form-label") }}
-      {{ form.due_date(class="form-control") }}
-    </div>
-    <div class="col">
-      {{ form.priority.label(class="form-label") }}
-      {{ form.priority(class="form-control", placeholder="Leave empty for NLP suggestion") }}
-    </div>
-    <div class="col">
-      {{ form.category.label(class="form-label") }}
-      {{ form.category(class="form-control", placeholder="Leave empty for NLP suggestion") }}
-    </div>
-  </div>
-  <button type="submit" class="btn btn-primary mt-3">{{ form.submit.label.text }}</button>
-</form>
+<div class="container mt-5">
+  <div class="card shadow p-4 mb-5">
+    <h3 class="mb-4 text-center">📝 Your To-Do List</h3>
 
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Task</th>
-      <th>Due Date</th>
-      <th>Priority</th>
-      <th>Category</th>
-      <th>Status</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for task in tasks %}
-    <tr>
-      <td>{{ task.content }}</td>
-      <td>{{ task.due_date.strftime('%Y-%m-%d') }}</td>
-      <td>{{ task.priority }}</td>
-      <td>{{ task.category }}</td>
-      <td>{{ "Completed" if task.completed else "Pending" }}</td>
-      <td>
-        {% if not task.completed %}
-        <a href="{{ url_for('complete_task', task_id=task.id) }}" class="btn btn-success btn-sm">Complete</a>
-        {% endif %}
-        <a href="{{ url_for('delete_task', task_id=task.id) }}" class="btn btn-danger btn-sm">Delete</a>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+    <form method="POST">
+      {{ form.hidden_tag() }}
+
+      <!-- Task Content -->
+      <div class="mb-3">
+        <label for="content" class="form-label">Task Description</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-card-text"></i></span>
+          {{ form.content(class="form-control", id="content", placeholder="e.g., Finish project report") }}
+        </div>
+      </div>
+
+      <!-- Due Date, Priority, Category -->
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label for="due_date" class="form-label">Due Date</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-calendar-event-fill"></i></span>
+            {{ form.due_date(class="form-control", id="due_date") }}
+          </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <label for="priority" class="form-label">Priority</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-exclamation-circle-fill"></i></span>
+            {{ form.priority(class="form-control", id="priority", placeholder="Leave blank for NLP suggestion") }}
+          </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <label for="category" class="form-label">Category</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-tag-fill"></i></span>
+            {{ form.category(class="form-control", id="category", placeholder="Leave blank for NLP suggestion") }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="text-center">
+        <button type="submit" class="btn btn-success mt-2 px-5">
+          <i class="bi bi-plus-circle me-1"></i> {{ form.submit.label.text }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Tasks Table -->
+  <div class="card shadow">
+    <div class="card-body">
+      <h4 class="card-title mb-4 text-center">📋 Task List</h4>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Task</th>
+              <th>Due Date</th>
+              <th>Priority</th>
+              <th>Category</th>
+              <th>Status</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for task in tasks %}
+            <tr class="{% if task.completed %}table-success{% endif %}">
+              <td>{{ task.content }}</td>
+              <td>{{ task.due_date.strftime('%Y-%m-%d') }}</td>
+              <td><span class="badge bg-warning text-dark">{{ task.priority or 'N/A' }}</span></td>
+              <td><span class="badge bg-info text-dark">{{ task.category or 'Uncategorized' }}</span></td>
+              <td>
+                {% if task.completed %}
+                  <span class="badge bg-success">Completed</span>
+                {% else %}
+                  <span class="badge bg-secondary">Pending</span>
+                {% endif %}
+              </td>
+              <td class="text-end">
+                {% if not task.completed %}
+                <a href="{{ url_for('complete_task', task_id=task.id) }}" class="btn btn-outline-success btn-sm me-1">
+                  <i class="bi bi-check-circle-fill"></i> Complete
+                </a>
+                {% endif %}
+                <a href="{{ url_for('delete_task', task_id=task.id) }}" class="btn btn-outline-danger btn-sm">
+                  <i class="bi bi-trash-fill"></i> Delete
+                </a>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="6" class="text-center text-muted">No tasks yet. Add one above!</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
