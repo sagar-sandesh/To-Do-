@@ -1,9 +1,8 @@
-from flask import Flask, render_template, redirect, url_for, flash, request
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, render_template, redirect, url_for, flash
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, DateField, PasswordField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
-from flask_login import LoginManager, login_user, current_user, logout_user, login_required, UserMixin
+from flask_login import login_user, current_user, logout_user, login_required
 from nlp_utils import analyze_task
 import datetime
 from extensions import db, login_manager
