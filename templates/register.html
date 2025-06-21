@@ -1,21 +1,51 @@
 {% extends "base.html" %}
 {% block title %}Register{% endblock %}
 {% block content %}
-<h2>Register</h2>
-<form method="POST">
-  {{ form.hidden_tag() }}
-  <div class="mb-3">
-    {{ form.email.label(class="form-label") }}
-    {{ form.email(class="form-control") }}
+
+<div class="d-flex justify-content-center align-items-center min-vh-100 bg-light">
+  <div class="card shadow-lg p-4" style="width: 100%; max-width: 450px;">
+    <h3 class="text-center mb-4">📝 Create Your Account</h3>
+
+    <form method="POST" novalidate>
+      {{ form.hidden_tag() }}
+
+      <!-- Email -->
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+          {{ form.email(class="form-control", id="email", placeholder="Enter your email") }}
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+          {{ form.password(class="form-control", id="password", placeholder="Enter a password") }}
+        </div>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="mb-3">
+        <label for="confirm_password" class="form-label">Confirm Password</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-check2-circle"></i></span>
+          {{ form.confirm_password(class="form-control", id="confirm_password", placeholder="Re-enter password") }}
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn btn-success w-100 mt-3">
+        <i class="bi bi-person-plus-fill me-1"></i> {{ form.submit.label.text }}
+      </button>
+    </form>
+
+    <p class="text-center mt-3">
+      Already have an account? <a href="{{ url_for('login') }}">Login here</a>
+    </p>
   </div>
-  <div class="mb-3">
-    {{ form.password.label(class="form-label") }}
-    {{ form.password(class="form-control") }}
-  </div>
-  <div class="mb-3">
-    {{ form.confirm_password.label(class="form-label") }}
-    {{ form.confirm_password(class="form-control") }}
-  </div>
-  <button type="submit" class="btn btn-primary">{{ form.submit.label.text }}</button>
-</form>
+</div>
+
 {% endblock %}
