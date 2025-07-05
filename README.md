@@ -38,15 +38,15 @@ To-DO-/
 - ├── nlp_utils.py 
 - ├── requirements.txt
 - ├── instance/
-   ├── todo.db
+-  ├── todo.db
 - ├── templates/ 
 - │ ├── base.html
 - │ ├── index.html
 - │ ├── login.html
 - │ └── register.html
 - └── static/ 
-    └── js
-     └── style.css
+-   └── js
+-     └── style.css
 
 ---
 
