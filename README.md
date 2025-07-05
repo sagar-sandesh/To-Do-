@@ -30,7 +30,7 @@ A clean and modern **Flask-based To-Do List Application** that allows users to r
 
 ## 📁 Project Structure
 To-DO-/
-│
+
 - ├── app.py
 - ├── models.py 
 - ├── forms.py 
@@ -38,22 +38,22 @@ To-DO-/
 - ├── nlp_utils.py 
 - ├── requirements.txt
 - ├── instance/
--  ├── todo.db
+- │ ├── todo.db
 - ├── templates/ 
 - │ ├── base.html
 - │ ├── index.html
 - │ ├── login.html
 - │ └── register.html
-- └── static/ 
--   └── js
--     └── style.css
+- ├── static/ 
+- │  ├── js /
+- │    ├── style.css
 
 ---
 
 ## 🧠 NLP Task Analyzer
 
-`nlp_utils.py` uses spaCy to determine task **priority** and **category** based on keywords:
-`
+nlp_utils.py uses spaCy to determine task **priority** and **category** based on keywords:
+
 ```python
 import spacy
 
@@ -150,7 +150,7 @@ python app.py
 | `register.html` | Registration form                        |
 
 ## 👤 Author
-Sagar Sandesh Oli
-📧 sagarsandesh45@gmail.com
+Mr. Sagar Sandesh Oli
+📧 olisagarsandesh@gmail.com
 ## 📜 License
 This project is open-source and free to use under the MIT License.
