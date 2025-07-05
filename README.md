@@ -85,7 +85,7 @@ def analyze_task(task_text):
 
 ```
 ## 🔐 Database Models
-## 👤 User
+### 👤 User
 ```bash
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -93,7 +93,7 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(150), nullable=False)
     tasks = db.relationship('Task', backref='user', lazy=True)
 ```
-## ✅ Task
+### ✅ Task
 ```bash
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -150,7 +150,10 @@ python app.py
 | `register.html` | Registration form                        |
 
 ## 👤 Author
-Mr. Sagar Sandesh Oli
-📧 olisagarsandesh@gmail.com
+- Mr Sagar Sandesh Oli
+- 📧 olisagarsandesh@gmail.com
+- 📍 Kirstintie, Espoo, Finland
+- 📞 +358402457337
+
 ## 📜 License
 This project is open-source and free to use under the MIT License.
