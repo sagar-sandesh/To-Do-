@@ -83,12 +83,15 @@ def analyze_task(task_text):
 ```
 ## 🔐 Database Models
 ## 👤 User
+```bash
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(150), unique=True, nullable=False)
     password_hash = db.Column(db.String(150), nullable=False)
     tasks = db.relationship('Task', backref='user', lazy=True)
-✅ Task
+```
+## ✅ Task
+```bash
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(500), nullable=False)
@@ -97,16 +100,16 @@ class Task(db.Model):
     category = db.Column(db.String(100), default='General')
     completed = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
+```
   ---
 ## 🧾 requirements.txt
-Flask
-Flask-WTF
-Flask-SQLAlchemy
-Flask-Login
-email-validator
-spacy
-werkzeug
+- Flask
+- Flask-WTF
+- Flask-SQLAlchemy
+- Flask-Login
+- email-validator
+- spacy
+- werkzeug
 
 ---
 ## 📦 How to Run the App
