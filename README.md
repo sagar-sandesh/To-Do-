@@ -110,26 +110,31 @@ werkzeug
 
 ---
 ## 📦 How to Run the App
-### Clone the repo:
+### 1.Clone the repo:
 ```bash
 git clone https://github.com/yourusername/flask-nlp-todo.git
 cd flask-nlp-todo
 ```
 
-Set up a virtual environment:
+### 2.Set up a virtual environment:
+```bash
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
+```
 
-Install dependencies:
+### 3.Install dependencies:
+```bash
 pip install -r requirements.txt
 python -m spacy download en_core_web_sm
-
-Run the app:
+```
+### 4.Run the app:
+```bash
 python app.py
+```
 
-Visit: http://localhost:5000
-
-🎨 UI Screens (Templates)
+### 5.Visit: http://localhost:5000
+---
+## 🎨 UI Screens (Templates)
 
 | Template        | Description                              |
 | --------------- | ---------------------------------------- |
@@ -138,8 +143,8 @@ Visit: http://localhost:5000
 | `login.html`    | Login form                               |
 | `register.html` | Registration form                        |
 
-👤 Author
+## 👤 Author
 Sagar Sandesh Oli
 📧 sagarsandesh45@gmail.com
-📜 License
+## 📜 License
 This project is open-source and free to use under the MIT License.
