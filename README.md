@@ -29,21 +29,24 @@ A clean and modern **Flask-based To-Do List Application** that allows users to r
 ---
 
 ## 📁 Project Structure
-project/
+To-DO-/
 │
-- ├── app.py # Main Flask app and routes
-- ├── models.py # User and Task models
-- ├── forms.py # Registration, Login, and Task forms
-- ├── extensions.py # SQLAlchemy & Login manager instances
-- ├── nlp_utils.py # NLP-based task analyzer
-- ├── requirements.txt # Required dependencies
-- ├── templates/ # Jinja2 HTML templates
+- ├── app.py
+- ├── models.py 
+- ├── forms.py 
+- ├── extensions.py 
+- ├── nlp_utils.py 
+- ├── requirements.txt
+- ├── instance/
+   ├── todo.db
+- ├── templates/ 
 - │ ├── base.html
 - │ ├── index.html
 - │ ├── login.html
 - │ └── register.html
-- └── static/ # (Optional) Static assets like CSS or JS
-
+- └── static/ 
+    └── js
+     └── style.css
 
 ---
 
