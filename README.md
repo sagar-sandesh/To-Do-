@@ -31,18 +31,18 @@ A clean and modern **Flask-based To-Do List Application** that allows users to r
 ## 📁 Project Structure
 project/
 │
-├── app.py # Main Flask app and routes
-├── models.py # User and Task models
-├── forms.py # Registration, Login, and Task forms
-├── extensions.py # SQLAlchemy & Login manager instances
-├── nlp_utils.py # NLP-based task analyzer
-├── requirements.txt # Required dependencies
-├── templates/ # Jinja2 HTML templates
-│ ├── base.html
-│ ├── index.html
-│ ├── login.html
-│ └── register.html
-└── static/ # (Optional) Static assets like CSS or JS
+- ├── app.py # Main Flask app and routes
+- ├── models.py # User and Task models
+- ├── forms.py # Registration, Login, and Task forms
+- ├── extensions.py # SQLAlchemy & Login manager instances
+- ├── nlp_utils.py # NLP-based task analyzer
+- ├── requirements.txt # Required dependencies
+- ├── templates/ # Jinja2 HTML templates
+- │ ├── base.html
+- │ ├── index.html
+- │ ├── login.html
+- │ └── register.html
+- └── static/ # (Optional) Static assets like CSS or JS
 
 
 ---
@@ -50,7 +50,7 @@ project/
 ## 🧠 NLP Task Analyzer
 
 `nlp_utils.py` uses spaCy to determine task **priority** and **category** based on keywords:
-
+`
 ```python
 import spacy
 
@@ -80,8 +80,9 @@ def analyze_task(task_text):
 
     return priority, category
 
-🔐 Database Models
-👤 User
+```
+## 🔐 Database Models
+## 👤 User
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(150), unique=True, nullable=False)
@@ -96,7 +97,9 @@ class Task(db.Model):
     category = db.Column(db.String(100), default='General')
     completed = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-🧾 requirements.txt
+
+  ---
+## 🧾 requirements.txt
 Flask
 Flask-WTF
 Flask-SQLAlchemy
@@ -105,10 +108,13 @@ email-validator
 spacy
 werkzeug
 
-📦 How to Run the App
-Clone the repo:
+---
+## 📦 How to Run the App
+### Clone the repo:
+```bash
 git clone https://github.com/yourusername/flask-nlp-todo.git
 cd flask-nlp-todo
+```
 
 Set up a virtual environment:
 python -m venv venv
